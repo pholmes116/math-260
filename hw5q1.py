@@ -7,14 +7,89 @@ Example: Solving ODEs
 
 ### Part a
 
+""" 
+Because 'K' is defined as the maximum value of the population, the value of the 
+curent value of the population 'p' must be less than 'K' and therefore
+'p/K' is greater than 0 and less than 1
+"""
 
 ### Part b
 
+def fwd_back_euler(r, y0, t0, t1, h = 1e-3):
+    
+    if t1 < t0:
+        h *= -1
+    
+    def f(r, y):
+        return r * y * (1 - y)
+    
+    y = y0
+    t = t0
+    
+    while abs(t - t1) > 1e-12:
+        y += h * f(r, y)
+        t += h      
+        
+    return y
 
 ### Part c
 
+import matplotlib.pyplot as plt
+import numpy as np
 
-### Part d
+def rk4(r, y0, t0, t1, h = 1e-3):
+    
+    if t1 < t0:
+        h *= -1
+        
+    def f(r, y):
+        return r * y * (1 - y)
+    
+    y = y0
+    t = t0
+    
+    yvals = [y]
+    tvals = [t]
+    
+    while abs(t - t1) > 1e-12:
+        f1 = f(r, y)
+        f2 = f(r, y + (h / 2) * f1)
+        f3 = f(r, y + (h / 2) * f2)
+        f4 = f(r, y + h * f3)
+        
+        y += (h / 6) * (f1 + (2 * f2) + (2 * f3) + f4)
+        t += h
+        
+        yvals.append(y)
+        tvals.append(t)
+    
+    return yvals, tvals
 
 
-### Part e
+def exact(t):
+    return 1 / (1 + np.e ** (-t))
+
+
+y, t = rk4(1, 0.5, 0, 5)
+
+exact_list = [exact(x) for x in t]
+
+plt.figure()
+plt.plot(t, y, '-b', t, exact_list, '-r')
+plt.legend(["approx", "exact"])
+plt.xlabel('$t$')
+plt.ylabel('$y(t)$')
+plt.show
+
+### Part d (optional)
+
+def max_error(h):
+    y, t = rk4(1, 0.5, 0, 5, h)
+    
+    new_exact = [exact(x) for x in t]
+    
+    errors = [abs(new_exact[i] - y[i]) for i in range(len(y))]
+    
+    return max(errors)
+
+### Part e (optional)
