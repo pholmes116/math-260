@@ -93,3 +93,21 @@ def max_error(h):
     return max(errors)
 
 ### Part e (optional)
+
+k = 10
+hvals = [2 ** (-i) for i in range(1, k+1)]
+max_e = [max_error(h) for h in hvals]
+
+plt.figure()
+plt.loglog(hvals, max_e, '.--b')
+plt.xlabel('$h$')
+plt.ylabel('$E(h)$')
+plt.show()
+
+"""
+From looking at the resulting plot of max-error vs. step, we can see that the
+slope is correct (order = 4), and to get a max error of ~ 10e-6 we can have an
+h of ~.5. 
+
+Compared to Euler's method this is much better, as we would need an h of ~.001
+"""
